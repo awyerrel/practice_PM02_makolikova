@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Фитнес-клуб{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}
+    {% endblock %}
+
+</div>
+<script>
+(function() {
+    const flowers = ['🌸', '🌹', '🌷', '🌺', '🌼', '🌸', '🌷'];
+    const flowerCount = 35;
+    const body = document.body;
+
+    function createFallingFlower() {
+        const flower = document.createElement('div');
+        flower.style.position = 'fixed';
+        flower.style.top = '-30px';
+        flower.style.left = Math.random() * 100 + '%';
+        flower.style.fontSize = (Math.random() * 20 + 18) + 'px';
+        flower.style.opacity = Math.random() * 0.6 + 0.4;
+        flower.style.pointerEvents = 'none';
+        flower.style.zIndex = '9999';
+        flower.style.userSelect = 'none';
+        flower.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+        document.body.appendChild(flower);
+
+        const duration = Math.random() * 8 + 5; // 5-13 секунд
+        const start = performance.now();
+        const startRotate = Math.random() * 360;
+        const endRotate = startRotate + 360 * (Math.random() * 2 + 1);
+
+        function animateFlower(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / (duration * 1000), 1);
+            const y = progress * (window.innerHeight + 100);
+            const rot = startRotate + (endRotate - startRotate) * progress;
+            const xOffset = Math.sin(progress * Math.PI * 2) * 20;
+
+            flower.style.transform = `translateX(${xOffset}px) rotate(${rot}deg)`;
+            flower.style.top = `${y - 30}px`;
+
+            if (progress < 1) {
+                requestAnimationFrame(animateFlower);
+            } else {
+                flower.remove();
+                setTimeout(() => createFallingFlower(), Math.random() * 2000);
+            }
+        }
+
+        requestAnimationFrame(animateFlower);
+    }
+
+    for (let i = 0; i < flowerCount; i++) {
+        setTimeout(() => createFallingFlower(), Math.random() * 4000);
+    }
+
+    setInterval(() => {
+        if (document.body.children.length < flowerCount + 10) {
+            createFallingFlower();
+        }
+    }, 3000);
+})();
+</script>
+</body>
+</html>

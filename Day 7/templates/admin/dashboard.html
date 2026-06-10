@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Панель администратора{% endblock %}
+
+{% block content %}
+
+<h1>Панель администратора</h1>
+
+<p>
+Добро пожаловать, {{ session.login }}
+</p>
+
+<ul>
+
+<li>
+<a href="{{ url_for('admin_users') }}">
+Управление пользователями
+</a>
+</li>
+
+<li>
+<a href="{{ url_for('clients') }}">
+Список клиентов
+</a>
+</li>
+
+<li>
+<a href="{{ url_for('logout') }}">
+Выход
+</a>
+</li>
+
+</ul>
+
+{% endblock %}

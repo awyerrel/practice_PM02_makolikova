@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Панель работника{% endblock %}
+
+{% block content %}
+
+<h1>Панель работника</h1>
+
+<p>
+Добро пожаловать, {{ session.login }}
+</p>
+
+<ul>
+
+<li>
+<a href="{{ url_for('clients') }}">
+Просмотр клиентов
+</a>
+</li>
+
+<li>
+<a href="{{ url_for('logout') }}">
+Выход
+</a>
+</li>
+
+</ul>
+
+{% endblock %}

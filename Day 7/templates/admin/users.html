@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Пользователи{% endblock %}
+
+{% block content %}
+
+<h1>Пользователи</h1>
+
+<a href="{{ url_for('add_user') }}">
+Добавить пользователя
+</a>
+
+<br><br>
+
+<table>
+
+<tr>
+    <th>ID</th>
+    <th>Логин</th>
+    <th>Роль</th>
+    <th>Дата создания</th>
+    <th>Удалить</th>
+</tr>
+
+{% for user in users %}
+
+<tr>
+
+<td>{{ user.id_пользователя }}</td>
+<td>{{ user.логин }}</td>
+<td>{{ user.роль }}</td>
+<td>{{ user.created_at }}</td>
+
+<td>
+<a href="{{ url_for('delete_user', user_id=user.id_пользователя) }}">
+Удалить
+</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="{{ url_for('admin_dashboard') }}">
+Назад
+</a>
+
+{% endblock %}

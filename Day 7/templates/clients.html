@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+
+<h1>Клиенты фитнес-клуба</h1>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Фамилия</th>
+<th>Имя</th>
+<th>Телефон</th>
+<th>Email</th>
+</tr>
+
+{% for client in clients %}
+
+<tr>
+
+<td>{{ client.id_клиента }}</td>
+<td>{{ client.фамилия }}</td>
+<td>{{ client.имя }}</td>
+<td>{{ client.телефон }}</td>
+<td>{{ client.email }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="{{ url_for('admin_dashboard') }}">
+Назад
+</a>
+
+{% endblock %}
