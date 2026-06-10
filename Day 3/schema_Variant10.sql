@@ -20,6 +20,7 @@ COLLATE utf8mb4_unicode_ci;
 
 USE mydb;
 
+<<<<<<< HEAD
 CREATE TABLE Пользователи (
     id_пользователя INT AUTO_INCREMENT PRIMARY KEY,
     логин VARCHAR(50) UNIQUE NOT NULL,
@@ -27,6 +28,8 @@ CREATE TABLE Пользователи (
     роль ENUM('admin','worker') DEFAULT 'worker',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+=======
+>>>>>>> 3b4f349933548da8251d14636178f1a05d9906f0
 -- Клиенты
 CREATE TABLE Клиенты (
     id_клиента INT AUTO_INCREMENT PRIMARY KEY,
