@@ -1,0 +1,313 @@
+--- variant_10_original.py
++++ variant_10_fixed.py
+@@ -1,9 +1,9 @@
+ """
+-Module for file data processing with bugs (Variant No. 10)
++Module for file data processing - FIXED VERSION (Variant No. 10)
+ """
+ 
+ import csv
+ import json
+ import os
+ import time
+ import tracemalloc
+@@ -12,40 +12,49 @@
+ #  CONSTANTS 
+ CACHE_MAX_SIZE = 1000
+ results_cache = []
+ 
+ 
+ #  MAIN CLASS 
+ class FileProcessor:
+     
+     def __init__(self, filename: str):
+         self.filename = filename
+         self.data = []
++        self.processed_count = 0
+         
+     def load_data(self) -> None:
+         print(f"Loading data from {self.filename}")
+         
+         try:
++            # CHECK 1: File existence
++            if not os.path.exists(self.filename):
++                raise FileNotFoundError(f"File '{self.filename}' not found")
++            
++            # CHECK 2: File not empty
++            if os.path.getsize(self.filename) == 0:
++                raise ValueError(f"File '{self.filename}' is empty")
++            
+             with open(self.filename, 'r', encoding='utf-8') as file:
+-                reader = csv.reader(file)
++                reader = csv.DictReader(file)
++                
++                if not reader.fieldnames:
++                    raise ValueError("CSV file has no headers")
++                
++                expected_columns = ['Name', 'Age', 'Score']
++                for col in expected_columns:
++                    if col not in reader.fieldnames:
++                        raise ValueError(f"CSV missing column '{col}'")
++                
+                 for row_num, row in enumerate(reader, start=2):
+                     try:
+-                        name = row[0].strip()
++                        name = row['Name'].strip()
+                         if not name:
+                             print(f"Warning: row {row_num} has empty name, skipping")
+                             continue
+                         
+-                        age = int(row[1])
++                        age = int(row['Age'])
+                         if age < 0:
+                             print(f"Warning: row {row_num} has negative age ({age}), skipping")
+                             continue
+                         
+-                        score = float(row[2])
++                        score = float(row['Score'])
+                         if score < 0 or score > 100:
+                             print(f"Warning: row {row_num} has invalid score ({score}), skipping")
+                             continue
+@@ -67,60 +76,68 @@
+         print(f"Processing {len(self.data)} records...")
+         
+         for idx, item in enumerate(self.data):
+             print(f"  Processing #{idx+1}: {item['name']}", end=" ")
+             
++            # CHECK 4: Division by zero protection
++            if item['age'] == 0:
++                print(f"Warning: age = 0, skipping")
++                continue
++            
++            # FIX 1: Correct bonus formula
+             if item['age'] > 18:
+-                bonus = item['score'] * 1.1 + 5
++                bonus = item['score'] * 1.15
+             else:
+                 bonus = item['score'] * 0.9
+             
+-            result = item['score'] / item['age']
++            # FIX 2: Safe division
++            if item['age'] > 0:
++                ratio = item['score'] / item['age']
++            else:
++                ratio = 0
++            
++            # FIX 3: Cache size limit
++            if len(results_cache) >= CACHE_MAX_SIZE:
++                removed = results_cache.pop(0)
++                print(f"(removed old cache for {removed['name']})", end=" ")
+             
+             result_entry = {
+                 'name': item['name'],
+                 'age': item['age'],
+                 'score': item['score'],
+                 'bonus': round(bonus, 2),
+-                'ratio': round(result, 2),
++                'ratio': round(ratio, 2),
+                 'timestamp': time.time()
+             }
+             results_cache.append(result_entry)
++            self.processed_count += 1
+             
+-            temp_filename = f"temp_{item['name']}.tmp"
++            # FIX 4: Safe temporary file writing
+             try:
++                temp_filename = f"temp_{item['name']}.tmp"
+                 with open(temp_filename, 'w', encoding='utf-8') as temp_file:
+-                    temp_file.write(f"{item['name']},{bonus:.2f},{result:.2f}\n")
+-                print(f"OK (bonus={bonus:.2f}, ratio={result:.2f})")
++                    temp_file.write(f"{item['name']},{bonus:.2f},{ratio:.2f}\n")
++                print(f"OK (bonus={bonus:.2f}, ratio={ratio:.2f})")
+             except Exception as e:
+                 print(f"Error writing temp file: {e}")
+     
+     def save_results(self, output_file: str) -> None:
+         print(f"Saving results to {output_file}")
+         
+         try:
+-            dirname = os.path.dirname(output_file)
+-            if dirname:
+-                os.makedirs(dirname, exist_ok=True)
++            os.makedirs(os.path.dirname(output_file) if os.path.dirname(output_file) else '.', exist_ok=True)
+             
+             with open(output_file, 'w', encoding='utf-8') as f:
+                 json.dump({
+-                    'total_processed': len(results_cache),
++                    'total_processed': self.processed_count,
+                     'results': results_cache,
+                     'timestamp': time.time()
+                 }, f, indent=2, ensure_ascii=False)
+             
+-            print(f"Results saved ({len(results_cache)} records)")
++            print(f"Results saved ({self.processed_count} records)")
+             
+         except Exception as e:
+             print(f"Error saving: {e}")
+             raise
+     
+     def calculate_statistics(self) -> Dict[str, Any]:
+         print("Calculating statistics...")
+         
+@@ -137,84 +154,93 @@
+         stats = {
+             'count': len(self.data),
+             'avg_score': round(sum(scores) / len(scores), 2),
+             'min_score': min(scores),
+             'max_score': max(scores),
+             'avg_age': round(sum(ages) / len(ages), 2)
+         }
+         
+         print(f"  Average score: {stats['avg_score']}")
+         print(f"  Average age: {stats['avg_age']}")
+         
+         return stats
+     
+-    def recursive_scan(self, path: str, max_depth: int = 3, current_depth: int = 0) -> None:
++    def recursive_scan(self, path: str, max_depth: int = 3, current_depth: int = 0):
++        # FIX 5: Depth limit
+         if current_depth >= max_depth:
+             print(f"{'  ' * current_depth}Max depth reached ({max_depth})")
+             return
+         
+         try:
+             entries = os.listdir(path)
+             print(f"{'  ' * current_depth}Scanning: {path}")
+             
+             for entry in entries:
+                 full_path = os.path.join(path, entry)
+                 
+                 if entry.startswith('.'):
+                     continue
+                 
+                 if os.path.isdir(full_path):
+                     self.recursive_scan(full_path, max_depth, current_depth + 1)
+                 else:
+                     try:
+-                        f = open(full_path, 'r', encoding='utf-8')
+-                        content = f.read()
+-                        f.close()
++                        # FIX 6: Context manager
++                        with open(full_path, 'r', encoding='utf-8') as f:
++                            content = f.read()
+                         size = len(content)
+                         print(f"{'  ' * (current_depth + 1)}File: {entry} - {size} bytes")
+                     except Exception as e:
+                         print(f"{'  ' * (current_depth + 1)}Error reading {entry}: {e}")
+                         
+         except PermissionError:
+             print(f"{'  ' * current_depth}Permission denied for {path}")
+         except Exception as e:
+             print(f"{'  ' * current_depth}Error scanning {path}: {e}")
+ 
+ 
+ #  HELPER FUNCTIONS 
+ def create_test_data() -> str:
+     print("Creating test data...")
+     
+     if os.path.exists('test_data.csv'):
+         print("  File test_data.csv already exists")
+         return "test_data.csv"
+     
+     test_data = [
+         ['Name', 'Age', 'Score'],
+         ['Alice', '25', '85.5'],
+-        ['Bob', '17', '72.0'],
+-        ['Charlie', '0', '90.0'],
++        ['Bob', '17', '72.0'],      # Underage
++        ['Charlie', '0', '90.0'],   # Division by zero test
+         ['David', '30', '95.5'],
+         ['Eve', '22', '88.5'],
+         ['Frank', '19', '76.0'],
+         ['Grace', '16', '82.5'],
+         ['Henry', '24', '91.0'],
+-        ['Ivy', '0', '78.0'],
++        ['Ivy', '0', '78.0'],       # Division by zero test
+         ['Jack', '21', '84.0'],
+     ]
+     
+     try:
+         with open('test_data.csv', 'w', newline='', encoding='utf-8') as f:
+             writer = csv.writer(f)
+             writer.writerows(test_data)
+         print(f"  Created test file test_data.csv ({len(test_data)-1} records)")
+     except Exception as e:
+         print(f"  Error creating test file: {e}")
+         raise
+     
+     return "test_data.csv"
+ 
+ 
++def print_memory_stats() -> None:
++    snapshot = tracemalloc.take_snapshot()
++    top_stats = snapshot.statistics('lineno')
++    
++    print("\nMEMORY STATISTICS:")
++    print("-" * 60)
++    print(f"  Total allocated: {sum(stat.size for stat in top_stats) / 1024:.2f} KB")
++    print(f"  Total objects: {sum(stat.count for stat in top_stats)}")
++    print("\n  Top 5 by usage:")
++    
++    for i, stat in enumerate(top_stats[:5], 1):
++        print(f"    {i}. {stat.filename}:{stat.lineno}")
++        print(f"       Size: {stat.size / 1024:.2f} KB, Count: {stat.count}")
++    
++    print("-" * 60)
++
++
+ #  MAIN FUNCTION 
+ def main() -> None:
+     print("\n" + "="*60)
+     print("  PROGRAM DEBUGGING - VARIANT No. 10")
+     print("  File Data Processing")
+     print("="*60 + "\n")
+     
+     tracemalloc.start()
+     
+     try:
+         filename = create_test_data()
+         processor = FileProcessor(filename)
+         processor.load_data()
+         processor.process_data()
+         stats = processor.calculate_statistics()
+         processor.save_results('results.json')
+         
+         print("\nRecursive scanning current directory:")
+         print("-" * 60)
+         processor.recursive_scan('.', max_depth=2)
+         print("-" * 60)
+         
+-        snapshot = tracemalloc.take_snapshot()
+-        print("\nMEMORY STATISTICS:")
+-        print("-" * 60)
+-        for stat in snapshot.statistics('lineno')[:5]:
+-            print(stat)
+-        print("-" * 60)
++        print_memory_stats()
+         
+         print("\n" + "="*60)
+         print("  PROGRAM COMPLETED SUCCESSFULLY")
+-        print(f"  Processed records: {len(results_cache)}")
++        print(f"  Processed records: {processor.processed_count}")
+         print(f"  Cache size: {len(results_cache)}")
+         print("="*60 + "\n")
+         
+     except Exception as e:
+         print("\n" + "="*60)
+         print("  CRITICAL ERROR")
+         print("="*60)
+         print(f"\nError: {e}")
+         
+         import traceback
+         print("\nFull traceback:")
+         traceback.print_exc()
+         
+         print("\n" + "="*60)
+         return 1
+     
+     return 0
+ 
+ 
+ if __name__ == "__main__":
+     exit_code = main()
+     exit(exit_code)

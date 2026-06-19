@@ -1,0 +1,113 @@
+#  БРЕЙКПОИНТЫ 
+
+# 1. Условный брейкпоинт: остановка при делении на ноль
+break FileProcessor.process_data if item['age'] == 0
+
+# 2. Брейкпоинт на загрузке данных
+break FileProcessor.load_data
+
+# 3. Брейкпоинт на обработке данных
+break FileProcessor.process_data
+
+# 4. Брейкпоинт на сохранении результатов
+break FileProcessor.save_results
+
+# 5. Брейкпоинт на вычислении статистики
+break FileProcessor.calculate_statistics
+
+# 6. Брейкпоинт на рекурсивном сканировании
+break FileProcessor.recursive_scan
+
+
+#  АЛИАСЫ (СОКРАЩЕНИЯ) 
+
+# Алиас для печати возраста
+alias pp_age pp item['age']
+
+# Алиас для печати всей записи
+alias pp_item pp item
+
+# Алиас для печати имени
+alias pp_name pp item['name']
+
+# Алиас для печати кеша
+alias pp_cache pp results_cache
+
+# Алиас для печати текущей строки с номерами
+alias ll l . 5
+
+# Алиас для просмотра стека
+alias wt where
+
+
+#  НАСТРОЙКИ ОТОБРАЖЕНИЯ 
+
+# Ширина вывода
+set width 120
+
+# Стиль промпта
+set prompt (pdb) 
+
+# Показывать аргументы функции при входе
+set show_args True
+
+# Показывать возвращаемые значения
+set show_retval True
+
+
+#  КОМАНДЫ ПРИ СТАРТЕ 
+
+# Импорт необходимых модулей
+import pdb
+import os
+import sys
+
+# Добавление пути проекта
+sys.path.insert(0, os.path.dirname(__file__))
+
+# Вывод приветствия
+print("\n" + "="*60)
+print("  PDB DEBUGGER - VARIANT No. 10")
+print("  File Data Processing")
+print("="*60)
+print("\n  Available breakpoints:")
+print("    - process_data if item['age'] == 0")
+print("    - load_data")
+print("    - process_data")
+print("    - save_results")
+print("    - calculate_statistics")
+print("    - recursive_scan")
+print("\n  Aliases:")
+print("    - pp_age   : print item['age']")
+print("    - pp_item  : print item")
+print("    - pp_name  : print item['name']")
+print("    - pp_cache : print results_cache")
+print("    - ll       : list 5 lines around current")
+print("    - wt       : where (show stack)")
+print("="*60 + "\n")
+
+
+#  ВСПОМОГАТЕЛЬНЫЕ КОМАНДЫ 
+
+# Команда для очистки кеша
+!def clear_cache():
+    global results_cache
+    results_cache.clear()
+    print("Cache cleared")
+
+# Команда для показа размера кеша
+!def cache_size():
+    print(f"Cache size: {len(results_cache)}")
+
+# Команда для показа статистики
+!def show_stats():
+    print(f"Total records: {len(results_cache)}")
+    if results_cache:
+        print(f"Last record: {results_cache[-1]['name']}")
+        print(f"Cache size: {len(results_cache)}")
+
+
+#  ИНИЦИАЛИЗАЦИЯ 
+
+# Устанавливаем глобальные переменные для доступа
+!global results_cache

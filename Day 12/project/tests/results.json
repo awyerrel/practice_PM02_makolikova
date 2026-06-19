@@ -1,0 +1,70 @@
+{
+  "total_processed": 8,
+  "results": [
+    {
+      "name": "Alice",
+      "age": 25,
+      "score": 85.5,
+      "bonus": 98.32,
+      "ratio": 3.42,
+      "timestamp": 1781779784.3314826
+    },
+    {
+      "name": "Bob",
+      "age": 17,
+      "score": 72.0,
+      "bonus": 64.8,
+      "ratio": 4.24,
+      "timestamp": 1781779784.3319843
+    },
+    {
+      "name": "David",
+      "age": 30,
+      "score": 95.5,
+      "bonus": 109.82,
+      "ratio": 3.18,
+      "timestamp": 1781779784.3324246
+    },
+    {
+      "name": "Eve",
+      "age": 22,
+      "score": 88.5,
+      "bonus": 101.77,
+      "ratio": 4.02,
+      "timestamp": 1781779784.3328462
+    },
+    {
+      "name": "Frank",
+      "age": 19,
+      "score": 76.0,
+      "bonus": 87.4,
+      "ratio": 4.0,
+      "timestamp": 1781779784.3333387
+    },
+    {
+      "name": "Grace",
+      "age": 16,
+      "score": 82.5,
+      "bonus": 74.25,
+      "ratio": 5.16,
+      "timestamp": 1781779784.3337426
+    },
+    {
+      "name": "Henry",
+      "age": 24,
+      "score": 91.0,
+      "bonus": 104.65,
+      "ratio": 3.79,
+      "timestamp": 1781779784.3341403
+    },
+    {
+      "name": "Jack",
+      "age": 21,
+      "score": 84.0,
+      "bonus": 96.6,
+      "ratio": 4.0,
+      "timestamp": 1781779784.3345082
+    }
+  ],
+  "timestamp": 1781779784.3351607
+}

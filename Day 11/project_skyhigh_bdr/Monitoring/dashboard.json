@@ -1,0 +1,110 @@
+{
+  "dashboard": {
+    "title": "SkyHigh Backup Monitoring",
+    "version": 1,
+    "panels": [
+      {
+        "title": "Backup Status Overview",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "backup_status{job=\"db2\"}",
+            "legendFormat": "DB2"
+          },
+          {
+            "expr": "backup_status{job=\"postgres\"}",
+            "legendFormat": "PostgreSQL"
+          },
+          {
+            "expr": "backup_status{job=\"redis\"}",
+            "legendFormat": "Redis"
+          },
+          {
+            "expr": "backup_status{job=\"mssql\"}",
+            "legendFormat": "MSSQL"
+          },
+          {
+            "expr": "backup_status{job=\"kafka\"}",
+            "legendFormat": "Kafka"
+          }
+        ]
+      },
+      {
+        "title": "Backup Age (minutes)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "(time() - backup_last_success_timestamp{job=\"db2\"}) / 60",
+            "legendFormat": "DB2 Age"
+          },
+          {
+            "expr": "(time() - backup_last_success_timestamp{job=\"postgres\"}) / 60",
+            "legendFormat": "PostgreSQL Age"
+          },
+          {
+            "expr": "(time() - backup_last_success_timestamp{job=\"redis\"}) / 60",
+            "legendFormat": "Redis Age"
+          }
+        ],
+        "thresholds": [
+          {
+            "color": "green",
+            "value": 0
+          },
+          {
+            "color": "yellow",
+            "value": 15
+          },
+          {
+            "color": "red",
+            "value": 30
+          }
+        ]
+      },
+      {
+        "title": "Backup Size (GB)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "backup_size_bytes{job=\"db2\"} / 1024 / 1024 / 1024",
+            "legendFormat": "DB2"
+          },
+          {
+            "expr": "backup_size_bytes{job=\"postgres\"} / 1024 / 1024 / 1024",
+            "legendFormat": "PostgreSQL"
+          },
+          {
+            "expr": "backup_size_bytes{job=\"redis\"} / 1024 / 1024 / 1024",
+            "legendFormat": "Redis"
+          }
+        ]
+      },
+      {
+        "title": "Backup Duration (seconds)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "backup_duration_seconds{job=\"db2\"}",
+            "legendFormat": "DB2"
+          },
+          {
+            "expr": "backup_duration_seconds{job=\"postgres\"}",
+            "legendFormat": "PostgreSQL"
+          }
+        ]
+      },
+      {
+        "title": "Disk Space Usage",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "(node_filesystem_avail_bytes{mountpoint=\"/backup\"} / node_filesystem_size_bytes{mountpoint=\"/backup\"}) * 100",
+            "legendFormat": "Free Space %"
+          }
+        ],
+        "thresholds": [
+          {
+            "color": "green",
+            "value": 30
+          },
+         
