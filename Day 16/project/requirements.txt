@@ -1,0 +1,6 @@
+SQLAlchemy>=2.0
+pytest>=8.0
+pytest-cov
+pytest-httpx
+pytest-mock
+httpx
