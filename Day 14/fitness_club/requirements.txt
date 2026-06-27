@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 pytest
 pytest-cov
 pydantic
+=======
+pytest
+pytest-cov
+pydantic
+>>>>>>> 2f1db10bf35705f45bd43db49971fbda2ca12de9
 email-validator

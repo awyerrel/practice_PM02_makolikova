@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 pytest
+=======
+pytest
+>>>>>>> 2f1db10bf35705f45bd43db49971fbda2ca12de9
 pytest-cov
